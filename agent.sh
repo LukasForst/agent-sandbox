@@ -50,10 +50,9 @@ check_network() {
   fi
 }
 
-# generate -v /dev/null:<path> or -v <emptydir>:<path> flags for every entry in .gitignore
+# generate -v /dev/null:<path> flags for every file entry in .gitignore
 # skips: blank lines, comments, node_modules, wildcards/patterns with * ? [ ]
-# uses /dev/null for files, an empty tmpdir for directories
-_GITIGNORE_EMPTY_DIR=""
+# skips directories entirely (directories can be passed to the app)
 gitignore_null_mounts() {
   local gitignore="${PROJECT_PATH}/.gitignore"
   if [ ! -f "${gitignore}" ]; then
@@ -62,34 +61,18 @@ gitignore_null_mounts() {
   while IFS= read -r line || [ -n "$line" ]; do
     # skip blank lines, comments, and negation patterns
     [[ -z "$line" || "$line" == \#* || "$line" == \!* ]] && continue
-    # skip node_modules
-    [[ "$line" == "/node_modules" || "$line" == "node_modules" || "$line" == "node_modules/" ]] && continue
-    [[ "$line" == "/.pnpm-store" || "$line" == ".pnpm-store" || "$line" == ".pnpm-store/" ]] && continue
     # skip glob patterns (contain * ? [ ])
     [[ "$line" == *[\*\?\[]* ]] && continue
-    # remember if the original line had a trailing slash (explicit directory marker)
-    local is_dir_hint=0
-    [[ "$line" == */ ]] && is_dir_hint=1
+    # skip explicit directory markers (trailing slash)
+    [[ "$line" == */ ]] && continue
     # strip a leading slash if present
     local entry="${line#/}"
-    # strip a trailing slash if present
-    entry="${entry%/}"
     local target="${PROJECT_PATH}/${entry}"
-    # determine whether to treat as directory or file:
-    # 1. trailing slash in .gitignore  2. existing directory on host
-    if [ "${is_dir_hint}" -eq 1 ] || [ -d "${target}" ]; then
-      # only mount if the directory actually exists on the host
-      [ ! -d "${target}" ] && continue
-      # lazily create one shared empty tmpdir for all directory mounts
-      if [ -z "${_GITIGNORE_EMPTY_DIR}" ]; then
-        _GITIGNORE_EMPTY_DIR="$(mktemp -d)"
-      fi
-      echo "-v ${_GITIGNORE_EMPTY_DIR}:${target}"
-    else
-      # only mount if the file actually exists on the host
-      [ ! -f "${target}" ] && continue
-      echo "-v /dev/null:${target}"
-    fi
+    # skip if it's a directory on the host
+    [ -d "${target}" ] && continue
+    # only mount if the file actually exists on the host
+    [ ! -f "${target}" ] && continue
+    echo "-v /dev/null:${target}"
   done < "${gitignore}"
 }
 

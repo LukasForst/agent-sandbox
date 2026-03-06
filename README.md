@@ -2,7 +2,7 @@
 
 Sandboxes coding agent in docker container and mounts local directory to it.
 
-Simple tooling for JavaScript, Python and Go is installed, modify `Dockerfile.agents` to add more.
+Simple tooling for JavaScript, Python and Go is installed, modify `Dockerfile` to add more.
 
 ## Installation
 

@@ -10,7 +10,7 @@ PROJECT_NAME="$(basename $(pwd))"
 
 IMAGE_NAME="code-agent"
 CONTAINER_NAME="code-agent-${PROJECT_NAME}"
-DOCKERFILE="${SCRIPT_DIR}/Dockerfile.agents"
+DOCKERFILE="${SCRIPT_DIR}/Dockerfile"
 USER_NAME="agent"
 NETWORK_NAME=""
 FORCE_BUILD=0

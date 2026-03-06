@@ -60,8 +60,8 @@ gitignore_null_mounts() {
     return
   fi
   while IFS= read -r line || [ -n "$line" ]; do
-    # skip blank lines and comments
-    [[ -z "$line" || "$line" == \#* ]] && continue
+    # skip blank lines, comments, and negation patterns
+    [[ -z "$line" || "$line" == \#* || "$line" == \!* ]] && continue
     # skip node_modules
     [[ "$line" == "node_modules" || "$line" == "node_modules/" ]] && continue
     # skip glob patterns (contain * ? [ ])
@@ -77,13 +77,16 @@ gitignore_null_mounts() {
     # determine whether to treat as directory or file:
     # 1. trailing slash in .gitignore  2. existing directory on host
     if [ "${is_dir_hint}" -eq 1 ] || [ -d "${target}" ]; then
+      # only mount if the directory actually exists on the host
+      [ ! -d "${target}" ] && continue
       # lazily create one shared empty tmpdir for all directory mounts
       if [ -z "${_GITIGNORE_EMPTY_DIR}" ]; then
         _GITIGNORE_EMPTY_DIR="$(mktemp -d)"
       fi
       echo "-v ${_GITIGNORE_EMPTY_DIR}:${target}"
     else
-      # file (or doesn't exist yet) — /dev/null is fine
+      # only mount if the file actually exists on the host
+      [ ! -f "${target}" ] && continue
       echo "-v /dev/null:${target}"
     fi
   done < "${gitignore}"

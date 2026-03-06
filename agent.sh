@@ -63,8 +63,8 @@ gitignore_null_mounts() {
     # skip blank lines, comments, and negation patterns
     [[ -z "$line" || "$line" == \#* || "$line" == \!* ]] && continue
     # skip node_modules
-    [[ "$line" == "node_modules" || "$line" == "node_modules/" ]] && continue
-    [[ "$line" == ".pnpm-store" || "$line" == ".pnpm-store/" ]] && continue
+    [[ "$line" == "/node_modules" || "$line" == "node_modules" || "$line" == "node_modules/" ]] && continue
+    [[ "$line" == "/.pnpm-store" || "$line" == ".pnpm-store" || "$line" == ".pnpm-store/" ]] && continue
     # skip glob patterns (contain * ? [ ])
     [[ "$line" == *[\*\?\[]* ]] && continue
     # remember if the original line had a trailing slash (explicit directory marker)

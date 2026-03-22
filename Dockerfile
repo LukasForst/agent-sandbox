@@ -45,7 +45,7 @@ RUN ln -s /usr/bin/batcat /usr/local/bin/bat \
     && ln -s /usr/bin/fdfind /usr/local/bin/fd
 
 # install golang
-ARG GO_VERSION=1.25.4
+ARG GO_VERSION=1.25.5
 ARG TARGETARCH
 RUN GOARCH=$([ "$TARGETARCH" = "arm64" ] && echo "arm64" || echo "amd64") && \
     curl -fsSL "https://go.dev/dl/go${GO_VERSION}.linux-${GOARCH}.tar.gz" | tar -C /usr/local -xz

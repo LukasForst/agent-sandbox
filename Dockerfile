@@ -21,7 +21,8 @@ RUN apt-get update && apt-get install -y \
     sudo \
     netcat-traditional \
     iputils-ping \
-    file
+    file \
+    poppler-utils
 
 # install postgresql client 18
 RUN curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor -o /usr/share/keyrings/postgresql-keyring.gpg && \

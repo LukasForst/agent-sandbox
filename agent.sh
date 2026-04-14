@@ -65,6 +65,8 @@ gitignore_null_mounts() {
     [[ "$line" == *[\*\?\[]* ]] && continue
     # skip explicit directory markers (trailing slash)
     [[ "$line" == */ ]] && continue
+    # because nextjs is stupid and without this file it won't build
+    [[ "$line" == "next-env.d.ts" ]] && continue
     # strip a leading slash if present
     local entry="${line#/}"
     local target="${PROJECT_PATH}/${entry}"

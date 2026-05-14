@@ -87,7 +87,7 @@ run() {
     "${ENV_ARGS[@]}" \
     -v "${HOME}/.claude.json:/home/${USER_NAME}/.claude.json" \
     -v "${HOME}/.claude:/home/${USER_NAME}/.claude" \
-    -v "${HOME}/.copilot:/home/${USER_NAME}/.copilot" \
+    $([ -d "${HOME}/.copilot" ] && echo "-v ${HOME}/.copilot:/home/${USER_NAME}/.copilot") \
     -v "$(pwd):${PROJECT_PATH}" \
     $(gitignore_null_mounts) \
     --workdir "${PROJECT_PATH}" \
